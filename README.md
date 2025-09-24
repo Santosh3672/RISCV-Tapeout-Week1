@@ -252,3 +252,298 @@ No further optimization required.
 *Fig: Schematic after synthesis of mult8.v*
 
 </details>
+
+<details>
+<summary>Day 3 - Combinational and Sequential Optimization</summary>
+
+## Day 3 - Combinational and Sequential Optimization
+
+### Introduction to Logic Optimization:
+
+**Techniques of combinational optimization:**
+1. Constant propagation: Optimizing combinational logic due to constant inputs,
+	eg if an input of and gate is 0 the output is always 0 so the gate can be replaced with a logic 0.
+2. Boolean logic optimization: Optimizing a logic equation to reduced form using boolean variables.
+
+
+**Techniques of sequential optimization:**
+1. Sequential constant propagation: Optimizing sequential logic based on input tied to sequential logics input,
+	eg if D pin of a DFF without set tied to 0 then its output is always 0 so DFF can be removed.
+2. State optimization: Optimization of unused states based on state diagram
+3. Cloning: For multiple fanout flops the logic is replicated to optimize timing and reduce delays. 
+4. Retiming: Moving/arranging combinational logic between pipelines to optimize timing and improve performance.
+
+### Labs on Combinational logic Optimization
+
+To do optimization logic in yosys use the following command post synthesis 
+	`opt_clean -purge`
+
+**Design1:** opt_check.v 
+**Logic:** 	assign y = a?b:0;
+**Logic optimization:**
+y = a*b + a’*0 = a*b + 0 = a*b = ab
+
+**note:** * implies and operation and + implies or operation
+Requires 1 and gate to implement
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p16.png)  
+*Fig: Schematic of optimized opt_check.v using one and gate*
+
+**Design2:** opt_check2.v
+**Logic:** 	assign y = a?1:b;
+**Logic** optimization:
+y = a*1 + a’*b = a + a’*b = a + b (absorption law)
+Requires 1 or gate to implement
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p17.png)  
+*Fig: Schematic of optimized opt_check2.v using one or gate*
+
+
+**Design3:** opt_check3.v
+**Logic:**	assign y = a?(c?b:0):0;
+**Logic optimization:**
+y = a’*0 + a*(c*b + c’*0) = 0 + a*(b*c + 0) = a*b*c
+Requires a 3 input and gate
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p18.png)  
+*Fig: Schematic of optimized opt_check3.v using a 3 input and gate*
+
+**Design4:** opt_check4.v
+**Logic:**  assign y = a?(b?(a & c ):c):(!c);
+**Logic optimization:** y = a*(b*a*c + b’*c) + a’*c’ = abc + ab’c + a’c’ = ac + a’c’ = a xnor c
+Requires an xnor gate
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p19.png)  
+*Fig: Schematic of optimized opt_check4.v using an xnor gate*
+
+In all above 4 design we were able to optimize them and same is done by yosys as well as shown in the lab snippets above.
+
+**Combinational optimization for hierarchical deisng:**
+**Design 5:** multiple_module_opt.v
+**Logic:**
+sub_module1 U1 (.a(a) , .b(1'b1) , .y(n1));
+sub_module2 U2 (.a(n1), .b(1'b0) , .y(n2));
+sub_module2 U3 (.a(b), .b(d) , .y(n3));
+
+assign y = c | (b & n1);
+
+sub_module1: y = a & b;
+sub_module2: y = a^b;
+
+**Logic optimization:**
+n1 = a&1 = a
+n2 = n1^0 = a^0 = a
+n3 = a^d
+y = c  | (b&n1) = c + b&a = ab + c
+Requires 1 and gate & 1 or gate.
+For hierarchical design we need to do `flatten` after synthesis follower by `opt_clean -purge`.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p20.png)  
+*Fig: Schematic of optimized multiple_module_opt.v using an and21or gate*
+
+Yosys used andor cell, A1 and A2 inputs are anded (signal a and b) result is ored with B1 (c) giving output A1*A2 + B1 = a*b + c
+
+**Design 6:** multiple_module_opt2.v
+**Logic:**
+sub_module U1 (.a(a) , .b(1'b0) , .y(n1));
+sub_module U2 (.a(b), .b(c) , .y(n2));
+sub_module U3 (.a(n2), .b(d) , .y(n3));
+sub_module U4 (.a(n3), .b(n1) , .y(y));
+
+sub_module: assign y = a & b;
+
+**Logic optimization:** n1 = a & 0 = 0
+n2  = b&c or b*c
+n3 = n2 & d  = b*c*d
+y = n3 & n1 = b*c*d*0 = 0
+
+Output tied to 0
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p21.png)  
+*Fig: Schematic of optimized multiple_module_opt2.v where output is tied to 0 as expected*
+
+### Labs on Sequential logic Optimization
+
+For sequential optimization we need to follow steps of synthesizing sequential logic and do `opt_clean -purge` post synth command.
+**Design 1:** dff_cons1.v
+**Logic:**
+``module dff_const1(input clk, input reset, output reg q);
+always @(posedge clk, posedge reset)
+begin
+	if(reset)
+		q <= 1'b0;
+	else
+		q <= 1'b1;
+end
+
+endmodule``
+
+It is an async reset DFF with D tied to logic 1 and async reset makes output logic 0, as it is async reset the flop cant be optimized. This is because the reset instantly makes output 0 but after reset is removed the output becomes 1 after next clock edge.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p22.png)  
+*Fig: Schematic of optimized dff_const1.v with a DFF and inverter*
+ As the reset of the flop in library was of active low reset was inverted by yosys
+
+
+**Design2:** dff_cons2.v
+**Logic:** 
+``module dff_const2(input clk, input reset, output reg q);
+always @(posedge clk, posedge reset)
+begin
+	if(reset)
+		q <= 1'b1;
+	else
+		q <= 1'b1;
+end
+
+endmodule``
+
+It is an async reset DFF with D input tied to 1 and reset also making output 1, hence the output will always be 1 in all scenario. So DFF can be optimized and output tied to 1.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p23.png)  
+*Fig: Schematic of optimized dff_const2.v with flop optimized and output tied to logic1*
+
+**Design 3:** dff_const3.v
+**Logic:**
+``module dff_const3(input clk, input reset, output reg q);
+reg q1;
+
+always @(posedge clk, posedge reset)
+begin
+	if(reset)
+	begin
+		q <= 1'b1;
+		q1 <= 1'b0;
+	end
+	else
+	begin
+		q1 <= 1'b1;
+		q <= q1;
+	end
+end
+
+endmodule``
+
+**Logic optimization:** When reset: q = 1, q1 = 0
+After reset removed first clock edge : q1 = 1, q = q1 (previous value) = 0
+second clock edge: q1 = 1, q = q1(prev) = 1
+same for all subsequent clock cycles
+Hence flop cant be optimized.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p24.png)  
+*Fig: Schematic of optimized dff_const3.v with two sets of flops and inverters*
+
+There are 2 flops used for two signals q and q1.
+
+
+
+
+**Design 4:** dff_const4.v
+**Logic:**
+``module dff_const4(input clk, input reset, output reg q);
+reg q1;
+
+always @(posedge clk, posedge reset)
+begin
+	if(reset)
+	begin
+		q <= 1'b1;
+		q1 <= 1'b1;
+	end
+	else
+	begin
+		q1 <= 1'b1;
+		q <= q1;
+	end
+end
+
+endmodule``
+
+**Logic optimization:**
+When reset: q = 1, q1 = 1
+After reset removed first clock edge : q1 = 1, q = q1 (previous value) = 1
+second clock edge: q1 = 1, q = q1(prev) = 1
+same for all subsequent clock cycles
+
+q value is always 1 so it can be tied to logic 1 which is also observed in yosys optimization.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p25.png)  
+*Fig: Schematic of optimized dff_const4.v with flop optimized as expected*
+
+**Design 5:** dff_count5.v
+**Logic:**
+`` module dff_const5(input clk, input reset, output reg q);
+reg q1;
+
+always @(posedge clk, posedge reset)
+begin
+	if(reset)
+	begin
+		q <= 1'b0;
+		q1 <= 1'b0;
+	end
+	else
+	begin
+		q1 <= 1'b1;
+		q <= q1;
+	end
+end
+
+endmodule``
+
+
+**Logic optimization:**
+When reset: q = 0, q1 = 0
+After reset removed first clock edge : q1 = 1, q = q1 (previous value) = 0
+second clock edge: q1 = 1, q = q1(prev) = 1
+same for all subsequent clock cycles
+
+As values of q is not same and changes after reset is removed for first clock perior to 0 then goes to 1, flop cant be optimized and we require 2 flops in design.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p26.png)  
+*Fig: Schematic of optimized dff_const5.v with two sets of flops and inverters*
+
+### Labs on unused output optimization:
+**Design 1:** counter_opt.v
+**Logic:**
+``module counter_opt (input clk , input reset , output q);
+reg [2:0] count;
+assign q = count[0];
+
+always @(posedge clk ,posedge reset)
+begin
+	if(reset)
+		count <= 3'b000;
+	else
+		count <= count + 1;
+end
+
+endmodule``
+
+It is a 3 bit counter and output is the LSB (count[0]) of the counter as count[1] and count[2] is not required, the design can be reduced to a 1 bit counter.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p27.png)  
+*Fig: Schematic of optimized counter_opt.v with 1 DFF and combinational logic*
+
+It is using 1 DFF with inverted output q used as input forming toggle function. Which is representation of 1bit counter.
+
+**Design2:** counter_opt2.v
+**Logic:**
+``module counter_opt (input clk , input reset , output q);
+reg [2:0] count;
+assign q = (count[2:0] == 3'b100);
+
+always @(posedge clk ,posedge reset)
+begin
+	if(reset)
+		count <= 3'b000;
+	else
+		count <= count + 1;
+end
+
+endmodule``
+The design has a 3 bit counter and output is MSB of counter(count[2]), so we have to implement 3 bit counter with 3 flipflops and logic for inrementing count.
+
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p28.png)  
+*Fig: Schematic of optimized counter_opt2.v with 3 DFF and combinational logic*
+
+As expected yosys optimized logic has 3 flip flops and combinational gates to implement incremental logic.
+
