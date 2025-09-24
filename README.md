@@ -143,10 +143,10 @@ Cell Delay for all input combinations.
 5. Visualize the data using `show <module name>`
 6. Dump the netlist using `write_verilog -noattr <output file name>`
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p5.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p5.png)
 *Fig: Synthesis statistics of hierachical synthesys of multiple_modules*
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p6.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p6.png)
 *Fig: Schematic and yosys dumped netlist of hier synthesis showing hierarchies*
 
 **Steps for doing flat synthesis**
@@ -154,10 +154,10 @@ Cell Delay for all input combinations.
 Follow step 1-4 of hierarchical synthesis and flatten design using `flatten` command. Then follow
 step 5 and 6 of hierarchical synthesis.
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p7.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p7.png)
 *Fig: Synthesis statistics of flat synthesys of multiple_modules*
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p8.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p8.png)
 *Fig: Schematic and yosys dumped netlist of flat synthesis showing individual gates*
 
 
@@ -165,10 +165,10 @@ step 5 and 6 of hierarchical synthesis.
 During step 3 replace top module name with name of the submodule:
 `synth -top <sub module name>`
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p9.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p9.png)
 *Fig: Synthesis statistics of sub_module1 in multiple_modules*
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p10.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p10.png)
 *Fig: Schematic and yosys dumped netlist of sub_module1*
 
 
@@ -183,17 +183,17 @@ Types of flops:
  
 Simulation of Different types of DFF:
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p11.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p11.png)
 *Fig: Simulation waveform of DFF with async, sync and both resets present complete window*
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p12.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p12.png)
 *Fig: Simulation waveform of DFF with async, sync and both resets present zoomed window showing transition*
 
 
 Synthesis of various DFFs:
 For synthesis of sequential cells we need to perform an additional step of mapping dff libraries after synthesis using the command `dfflibmap -liberty <dff lib area>`
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p13.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p13.png)
 *Fig: Schematic and gate level netlist after synth of DFF with synchronous reset*
 
 
@@ -201,7 +201,7 @@ For synthesis of sequential cells we need to perform an additional step of mappi
 For mult2 function that multiplies input by 2 can be done by shifting of input to left by one position. There is no logic required
 Same is also seen in Yosys runs:
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p14.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p14.png)
 *Fig: Schematic after synth of mult2.v*
 
 Similarly for mult9 if a is 3 bit so a[2:0]*9 = y[5:0]
@@ -209,7 +209,7 @@ Similarly for mult9 if a is 3 bit so a[2:0]*9 = y[5:0]
 	=> y[5:3] = a[2:0]  & y[2:0] = a[2:0]
 Hence here also no optimization is required.
 
-!(https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p15.png)
+![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p15.png)
 *Fig: Schematic after synth of mult8.v*
 
 </details>
