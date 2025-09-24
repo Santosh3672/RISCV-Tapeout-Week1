@@ -116,22 +116,22 @@ Converts behavioral RTL to gate-level netlist using a standard cell library.
 <summary>Day 2 - Timing libs, hierarchical vs flat synthesis and efficient flop coding styles </summary>
 
 ### Timing libs
-Format: Liberty 
-Name of library used: sky130_fd_sc_hd__tt_025C_1v80.lib
-Sky130: Sky 130 process node
-FD: Lib provided by skywater foundry
-SC: Standard cell
-HD: High density
-TT: Typical fabrication process
-025C: 25 degree Celsius junction temperature
-1v80: 1.8V operating voltage
-Last 3 parameters are the PVT condition for which the library is characterized.
+Format: Liberty  
+Name of library used: sky130_fd_sc_hd__tt_025C_1v80.lib  
+Sky130: Sky 130 process node  
+FD: Lib provided by skywater foundry  
+SC: Standard cell  
+HD: High density  
+TT: Typical fabrication process  
+025C: 25 degree Celsius junction temperature  
+1v80: 1.8V operating voltage  
+Last 3 parameters are the PVT condition for which the library is characterized.  
 
 **Content of library:**
-Technology info
-Units detail of time, voltage, current, etc
-Leakage power information for all input combinations
-Cell Delay for all input combinations.
+Technology info  
+Units detail of time, voltage, current, etc  
+Leakage power information for all input combinations  
+Cell Delay for all input combinations  
 
 ### Hierarchical and flat synthesis:
 
@@ -151,8 +151,9 @@ Cell Delay for all input combinations.
 
 **Steps for doing flat synthesis**
 
-Follow step 1-4 of hierarchical synthesis and flatten design using `flatten` command. Then follow
-step 5 and 6 of hierarchical synthesis.
+1. Follow step 1-4 of hierarchical synthesis
+2. Flatten design using `flatten` command. 
+3. follow step 5 and 6 of hierarchical synthesis.
 
 ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p7.png)
 *Fig: Synthesis statistics of flat synthesys of multiple_modules*
@@ -161,8 +162,8 @@ step 5 and 6 of hierarchical synthesis.
 *Fig: Schematic and yosys dumped netlist of flat synthesis showing individual gates*
 
 
-**Synthesis of a submodule of hierarchical design:**
-During step 3 replace top module name with name of the submodule:
+**Synthesis of a submodule of hierarchical design:**  
+During step 3 replace top module name with name of the submodule:  
 `synth -top <sub module name>`
 
 ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p9.png)
@@ -173,13 +174,13 @@ During step 3 replace top module name with name of the submodule:
 
 
 ### Flipflop analysis and Synthesis:
-Used to hold value of signal to avoid glitch in design.
-Asynchronous reset: Output resets instantly when reset is enabled
-Synchronous reset: Output resets during the first clock edge post reset is enabled
-Types of flops:
+Used to hold value of signal to avoid glitch in design.  
+Asynchronous reset: Output resets instantly when reset is enabled  
+Synchronous reset: Output resets during the first clock edge post reset is enabled  
+Types of flops:  
 - Async reset DFF
 - Sync reset DFF
--Async and Sync reset DFF
+- Async and Sync reset DFF
  
 Simulation of Different types of DFF:
 
@@ -190,7 +191,7 @@ Simulation of Different types of DFF:
 *Fig: Simulation waveform of DFF with async, sync and both resets present zoomed window showing transition*
 
 
-Synthesis of various DFFs:
+Synthesis of various DFFs:  
 For synthesis of sequential cells we need to perform an additional step of mapping dff libraries after synthesis using the command `dfflibmap -liberty <dff lib area>`
 
 ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p13.png)
@@ -198,16 +199,17 @@ For synthesis of sequential cells we need to perform an additional step of mappi
 
 
 ### Optimization in Yosys:
-For mult2 function that multiplies input by 2 can be done by shifting of input to left by one position. There is no logic required
-Same is also seen in Yosys runs:
+For mult2 function that multiplies input by 2 can be done by shifting of input to left by one position. There is no logic required  
+Same is also seen in Yosys runs:  
 
 ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p14.png)
 *Fig: Schematic after synth of mult2.v*
 
-Similarly for mult9 if a is 3 bit so a[2:0]*9 = y[5:0]
-	y[5:0] = a[2:0]*8 + a[2:0] 
-	=> y[5:3] = a[2:0]  & y[2:0] = a[2:0]
-Hence here also no optimization is required.
+Similarly for mult9 if a is 3 bit  
+    so a[2:0]*9 = y[5:0]  
+	y[5:0] = a[2:0]*8 + a[2:0]   
+	=> y[5:3] = a[2:0]  & y[2:0] = a[2:0]  
+Hence here also no optimization is required.  
 
 ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p15.png)
 *Fig: Schematic after synth of mult8.v*
