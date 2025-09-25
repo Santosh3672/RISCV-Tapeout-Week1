@@ -547,4 +547,3 @@ The design has a 3 bit counter and output is MSB of counter(count[2]), so we hav
 
 As expected yosys optimized logic has 3 flip flops and combinational gates to implement incremental logic.
 
-</details>
