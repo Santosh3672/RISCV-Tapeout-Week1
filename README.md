@@ -1,31 +1,34 @@
 # RISCV Tapeout Week1
 
-Week 1 of RISCV tapeout covering RTL design, Synthesis, Optimization, and Gate-Level Simulation (GLS).
+This repository documents Week 1 of RISCV tapeout, covering RTL design, synthesis, optimization, and gate-level simulation (GLS) using open-source tools.
+
+---
 
 <details>
 <summary>Day 1 - Introduction to Verilog RTL Design and Synthesis</summary>
 
 ## Day 1 - Introduction to Verilog RTL Design and Synthesis
 
-### Introduction to Iverilog and GTKWave
+### Overview
 
-**Stimulator:**  
-Stimulates the RTL design and compares its output to specifications. We use **Icarus Verilog (Iverilog)** as the simulator tool.
+This section introduces the basics of RTL simulation and synthesis using **Icarus Verilog (iverilog)** and **GTKWave**.
 
-**Testbench:**  
-Applies stimulus to the design to check its functionality.
+### Stimulator and Testbench
 
-The stimulator monitors changes in input and evaluates the output by providing primary inputs and observing primary outputs.
+- **Stimulator:** Used to stimulate the RTL design and compare its output to specifications. We use **Icarus Verilog (iverilog)** as the simulator tool.
+- **Testbench:** Applies stimulus to the design to check its functionality.
+- The stimulator monitors changes in input and evaluates the output by providing primary inputs and observing primary outputs.
+
+### Simulation Flow
+
+- Input design and testbench files are provided to **iverilog**, which generates a **VCD (Value Change Dump)** file containing signal changes over time.
+- The VCD file can be viewed using **GTKWave** for waveform analysis.
 
 ![Testing of Design using Testbench](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p1.png)  
 *Fig: Testing of Design using Testbench*
 
-![Iverilog based simulation flow](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p2.png)
+![Iverilog based simulation flow](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p2.png)  
 *Fig: Iverilog based simulation flow*
-
-**Simulation Flow:**  
-- Input design and testbench files are provided to **Iverilog**, which generates a **VCD (Value Change Dump)** file containing signal changes over time.
-- The VCD file can be viewed using **GTKWave** for waveform analysis.
 
 ### Labs on Logic Simulation
 
@@ -54,7 +57,7 @@ After installing the tools, clone the lab module from [sky130RTLDesignAndSynthes
 5. Drag required signals to the signal section and use "Zoom Fit" to see the full simulation window.
 6. Use "Find Next/Previous Edge" to track signal transitions.
 
-![Simulation of good mux using iverilog and waves in GTKWave](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p3.png)
+![Simulation of good mux using iverilog and waves in GTKWave](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p3.png)  
 *Fig: Simulation of good mux using iverilog and waves in GTKWave*
 
 **Testbench Structure:**
@@ -87,7 +90,7 @@ Converts behavioral RTL to gate-level netlist using a standard cell library.
     ```sh
     abc -liberty <liberty_file>
     ```
-5. Visualize netlist in schematic viewer(requires setuptools for Python 3.12+):
+5. Visualize netlist in schematic viewer (requires setuptools for Python 3.12+):
     ```sh
     show
     ```
@@ -96,13 +99,13 @@ Converts behavioral RTL to gate-level netlist using a standard cell library.
     write_verilog -noattr <output_netlist.v>
     ```
 
-![Synthesis of good_mux in Yosys post synth stage](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p4.png)
+![Synthesis of good_mux in Yosys post synth stage](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p4.png)  
 *Fig: Synthesis of good_mux in Yosys post synth stage*
 
-![Synthesis of good_mux in Yosys post netlist generation](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p5.png)
+![Synthesis of good_mux in Yosys post netlist generation](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p5.png)  
 *Fig: Synthesis of good_mux in Yosys post netlist generation*
 
-![Yosys schematic viewer of good_mux.v](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p6.png)
+![Yosys schematic viewer of good_mux.v](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p6.png)  
 *Fig: Yosys schematic viewer of good_mux.v*
 
 **Notes:**
@@ -111,6 +114,8 @@ Converts behavioral RTL to gate-level netlist using a standard cell library.
 - Cell selection during synthesis is critical for timing and power optimization.
 
 </details>
+
+---
 
 <details>
 <summary>Day 2 - Timing Libraries, Hierarchical vs Flat Synthesis, and Efficient Flip-Flop Coding Styles</summary>
@@ -253,6 +258,8 @@ No further optimization required.
 
 </details>
 
+---
+
 <details>
 <summary>Day 3 - Combinational and Sequential Optimization</summary>
 
@@ -261,22 +268,16 @@ No further optimization required.
 ### Introduction to Logic Optimization
 
 **Combinational Optimization Techniques:**
-- **Constant propagation:**  
-  Optimizes logic when inputs are constant.  
+- **Constant propagation:** Optimizes logic when inputs are constant.  
   *Example:* If an AND gate input is 0, output is always 0, so the gate can be replaced with logic 0.
-- **Boolean logic optimization:**  
-  Reduces logic equations using Boolean algebra.
+- **Boolean logic optimization:** Reduces logic equations using Boolean algebra.
 
 **Sequential Optimization Techniques:**
-- **Sequential constant propagation:**  
-  Optimizes sequential logic when inputs are tied to constants.  
+- **Sequential constant propagation:** Optimizes sequential logic when inputs are tied to constants.  
   *Example:* If D input of a DFF is always 0, output is always 0, so DFF can be removed.
-- **State optimization:**  
-  Removes unused states based on the state diagram.
-- **Cloning:**  
-  Replicates logic for multiple fanout flops to optimize timing and reduce delays.
-- **Retiming:**  
-  Rearranges combinational logic between pipeline stages to improve timing and performance.
+- **State optimization:** Removes unused states based on the state diagram.
+- **Cloning:** Replicates logic for multiple fanout flops to optimize timing and reduce delays.
+- **Retiming:** Rearranges combinational logic between pipeline stages to improve timing and performance.
 
 ---
 
@@ -289,32 +290,28 @@ opt_clean -purge
 
 #### Design 1: `opt_check.v`
 - **Logic:** `assign y = a ? b : 0;`
-- **Optimization:**  
-  `y = a*b` (requires one AND gate)
+- **Optimization:** `y = a*b` (requires one AND gate)
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p16.png)  
 *Fig: Optimized schematic using one AND gate*
 
 #### Design 2: `opt_check2.v`
 - **Logic:** `assign y = a ? 1 : b;`
-- **Optimization:**  
-  `y = a + b` (requires one OR gate)
+- **Optimization:** `y = a + b` (requires one OR gate)
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p17.png)  
 *Fig: Optimized schematic using one OR gate*
 
 #### Design 3: `opt_check3.v`
 - **Logic:** `assign y = a ? (c ? b : 0) : 0;`
-- **Optimization:**  
-  `y = a * b * c` (requires a 3-input AND gate)
+- **Optimization:** `y = a * b * c` (requires a 3-input AND gate)
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p18.png)  
 *Fig: Optimized schematic using a 3-input AND gate*
 
 #### Design 4: `opt_check4.v`
 - **Logic:** `assign y = a ? (b ? (a & c) : c) : (!c);`
-- **Optimization:**  
-  `y = a xnor c` (requires an XNOR gate)
+- **Optimization:** `y = a xnor c` (requires an XNOR gate)
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p19.png)  
 *Fig: Optimized schematic using an XNOR gate*
@@ -326,17 +323,14 @@ opt_clean -purge
   - `sub_module1: y = a & b;`
   - `sub_module2: y = a ^ b;`
   - Top-level: `assign y = c | (b & n1);`
-- **Optimization:**  
-  `y = a*b + c` (requires one AND gate and one OR gate)
+- **Optimization:** `y = a*b + c` (requires one AND gate and one OR gate)
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p20.png)  
 *Fig: Optimized schematic using AND-OR gate*
 
 **Design 6:** `multiple_module_opt2.v`
-- **Logic:**  
-  All submodules are AND gates, but one input is always 0.
-- **Optimization:**  
-  Output is always 0.
+- **Logic:** All submodules are AND gates, but one input is always 0.
+- **Optimization:** Output is always 0.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p21.png)  
 *Fig: Output tied to 0 as expected*
@@ -352,40 +346,35 @@ opt_clean -purge
 
 #### Design 1: `dff_const1.v`
 - **Logic:** Async reset DFF, D input tied to 1.
-- **Optimization:**  
-  Cannot be optimized; output changes after reset.
+- **Optimization:** Cannot be optimized; output changes after reset.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p22.png)  
 *Fig: DFF and inverter used*
 
 #### Design 2: `dff_const2.v`
 - **Logic:** Async reset DFF, D input and reset both set output to 1.
-- **Optimization:**  
-  Output always 1; DFF can be removed.
+- **Optimization:** Output always 1; DFF can be removed.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p23.png)  
 *Fig: Output tied to logic 1*
 
 #### Design 3: `dff_const3.v`
 - **Logic:** Two registers, output changes after reset.
-- **Optimization:**  
-  Cannot be optimized; requires two flops.
+- **Optimization:** Cannot be optimized; requires two flops.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p24.png)  
 *Fig: Two flops and inverters used*
 
 #### Design 4: `dff_const4.v`
 - **Logic:** Two registers, output always 1.
-- **Optimization:**  
-  Output tied to logic 1.
+- **Optimization:** Output tied to logic 1.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p25.png)  
 *Fig: Flop optimized as expected*
 
 #### Design 5: `dff_const5.v`
 - **Logic:** Two registers, output changes after reset.
-- **Optimization:**  
-  Cannot be optimized; requires two flops.
+- **Optimization:** Cannot be optimized; requires two flops.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p26.png)  
 *Fig: Two flops and inverters used*
@@ -396,21 +385,21 @@ opt_clean -purge
 
 #### Design 1: `counter_opt.v`
 - **Logic:** 3-bit counter, output is LSB.
-- **Optimization:**  
-  Reduced to 1-bit counter.
+- **Optimization:** Reduced to 1-bit counter.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p27.png)  
-*Fig:  DFF and combinational logic (toggle function)*
+*Fig: DFF and combinational logic (toggle function)*
 
 #### Design 2: `counter_opt2.v`
 - **Logic:** 3-bit counter, output is MSB.
-- **Optimization:**  
-  Requires 3 flip-flops and combinational logic.
+- **Optimization:** Requires 3 flip-flops and combinational logic.
 
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p28.png)  
-*Fig:  DFFs and combinational logic for increment*
+*Fig: DFFs and combinational logic for increment*
 
 </details>
+
+---
 
 <details>
 <summary>Day 4 - Gate-Level Simulation (GLS) and Synthesis-Simulation Mismatch</summary>
@@ -437,10 +426,8 @@ The same testbench used for RTL can be applied to the gate-level netlist.
 - For timing analysis, timing models of standard cells are needed.
 
 **Common Causes of Synthesis-Simulation Mismatch:**
-1. **Missing sensitivity list:**  
-   Omitting important signals in the sensitivity list can change design behavior and produce unexpected outputs.
-2. **Blocking vs Non-blocking statements:**  
-   Blocking (`=`) executes statements sequentially, while non-blocking (`<=`) executes in parallel. Using blocking statements incorrectly can lead to unexpected results.
+1. **Missing sensitivity list:** Omitting important signals in the sensitivity list can change design behavior and produce unexpected outputs.
+2. **Blocking vs Non-blocking statements:** Blocking (`=`) executes statements sequentially, while non-blocking (`<=`) executes in parallel. Using blocking statements incorrectly can lead to unexpected results.
 
 ---
 
@@ -464,8 +451,7 @@ The same testbench used for RTL can be applied to the gate-level netlist.
 
 #### Design 2: Bad Mux (Missing Sensitivity List)
 
-- **Issue:**  
-  Inputs `i0` and `i1` are not in the sensitivity list, so output does not change with input.
+- **Issue:** Inputs `i0` and `i1` are not in the sensitivity list, so output does not change with input.
 - **Result:**  
   ![Bad mux simulation](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p3.png)  
   Schematic uses only one mux; GLS result mismatches with RTL simulation.
@@ -495,6 +481,7 @@ GLS helps catch mismatches between RTL simulation and synthesized netlist, espec
 
 </details>
 
+---
 
 <details>
 <summary>Day 5 - Optimization in Synthesis</summary>
@@ -508,8 +495,7 @@ GLS helps catch mismatches between RTL simulation and synthesized netlist, espec
 - **Case construct:** All cases have equal priority, so a mux is inferred.
 
 **Cautions with If:**
-- **Inferred latches:**  
-  If not all conditions are covered, the output may retain its previous value, resulting in a latch.  
+- **Inferred latches:** If not all conditions are covered, the output may retain its previous value, resulting in a latch.  
   *Example:*
   ```verilog
   if (cond1)
@@ -520,13 +506,10 @@ GLS helps catch mismatches between RTL simulation and synthesized netlist, espec
   ```
 
 **Cautions with Case:**
-1. **Incomplete case statement:**  
-   If not all cases are considered, a latch is inferred for missing cases.  
+1. **Incomplete case statement:** If not all cases are considered, a latch is inferred for missing cases.  
    *Solution:* Add a `default` case.
-2. **Partial assignment:**  
-   If all variables are not assigned in every case, unassigned variables will be latched.
-3. **Overlapping case conditions:**  
-   All case conditions must be unique; overlapping cases can confuse the simulator.
+2. **Partial assignment:** If all variables are not assigned in every case, unassigned variables will be latched.
+3. **Overlapping case conditions:** All case conditions must be unique; overlapping cases can confuse the simulator.
 
 ---
 
