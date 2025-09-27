@@ -1,25 +1,25 @@
-# RISCV Tapeout Week1
+# RISCV Tapeout Week1 🚀
 
 This repository documents Week 1 of RISCV tapeout, covering RTL design, synthesis, optimization, and gate-level simulation (GLS) using open-source tools.
 
 ---
 
 <details>
-<summary>Day 1 - Introduction to Verilog RTL Design and Synthesis</summary>
+<summary>Day 1 - Introduction to Verilog RTL Design and Synthesis 🛠️</summary>
 
 ## Day 1 - Introduction to Verilog RTL Design and Synthesis
 
-### Overview
+### Overview 📚
 
 This section introduces the basics of RTL simulation and synthesis using **Icarus Verilog (iverilog)** and **GTKWave**.
 
-### Stimulator and Testbench
+### Stimulator and Testbench ⚡
 
 - **Stimulator:** Used to stimulate the RTL design and compare its output to specifications. We use **Icarus Verilog (iverilog)** as the simulator tool.
 - **Testbench:** Applies stimulus to the design to check its functionality.
 - The stimulator monitors changes in input and evaluates the output by providing primary inputs and observing primary outputs.
 
-### Simulation Flow
+### Simulation Flow 🔄
 
 - Input design and testbench files are provided to **iverilog**, which generates a **VCD (Value Change Dump)** file containing signal changes over time.
 - The VCD file can be viewed using **GTKWave** for waveform analysis.
@@ -30,7 +30,7 @@ This section introduces the basics of RTL simulation and synthesis using **Icaru
 ![Iverilog based simulation flow](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d1p2.png)  
 *Fig: Iverilog based simulation flow*
 
-### Labs on Logic Simulation
+### Labs on Logic Simulation 🧪
 
 After installing the tools, clone the lab module from [sky130RTLDesignAndSynthesisWorkshop](https://github.com/kunalg123/sky130RTLDesignAndSynthesisWorkshop).
 
@@ -67,7 +67,7 @@ After installing the tools, clone the lab module from [sky130RTLDesignAndSynthes
 
 ---
 
-### Synthesis using Yosys
+### Synthesis using Yosys 🏗️
 
 **Synthesis:**  
 Converts behavioral RTL to gate-level netlist using a standard cell library.  
@@ -118,11 +118,11 @@ Converts behavioral RTL to gate-level netlist using a standard cell library.
 ---
 
 <details>
-<summary>Day 2 - Timing Libraries, Hierarchical vs Flat Synthesis, and Efficient Flip-Flop Coding Styles</summary>
+<summary>Day 2 - Timing Libraries, Hierarchical vs Flat Synthesis, and Efficient Flip-Flop Coding Styles ⏱️🏛️</summary>
 
 ## Day 2 - Timing Libraries, Hierarchical vs Flat Synthesis, and Efficient Flip-Flop Coding Styles
 
-### Timing Libraries
+### Timing Libraries 📖
 
 **Format:** Liberty  
 **Library Used:** `sky130_fd_sc_hd__tt_025C_1v80.lib`  
@@ -144,7 +144,7 @@ Converts behavioral RTL to gate-level netlist using a standard cell library.
 
 ---
 
-### Hierarchical vs Flat Synthesis
+### Hierarchical vs Flat Synthesis 🏗️
 
 #### Hierarchical Synthesis Steps
 
@@ -209,7 +209,7 @@ synth -top <submodule_name>
 
 ---
 
-### Flip-Flop Analysis and Synthesis
+### Flip-Flop Analysis and Synthesis 🔄
 
 Flip-flops are used to hold signal values and avoid glitches in design.
 
@@ -240,7 +240,7 @@ dfflibmap -liberty <dff_lib_area>
 
 ---
 
-### Optimization in Yosys
+### Optimization in Yosys ⚙️
 
 For the `mult2` function (multiplying input by 2), Yosys optimizes by shifting the input left by one position—no logic required.
 
@@ -261,11 +261,11 @@ No further optimization required.
 ---
 
 <details>
-<summary>Day 3 - Combinational and Sequential Optimization</summary>
+<summary>Day 3 - Combinational and Sequential Optimization 🧮🔁</summary>
 
 ## Day 3 - Combinational and Sequential Optimization
 
-### Introduction to Logic Optimization
+### Introduction to Logic Optimization 🧠
 
 **Combinational Optimization Techniques:**
 - **Constant propagation:** Optimizes logic when inputs are constant.  
@@ -281,7 +281,7 @@ No further optimization required.
 
 ---
 
-### Labs on Combinational Logic Optimization
+### Labs on Combinational Logic Optimization 🧪
 
 Use the following command in Yosys after synthesis for optimization:
 ```sh
@@ -316,7 +316,7 @@ opt_clean -purge
 ![Schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1p19.png)  
 *Fig: Optimized schematic using an XNOR gate*
 
-#### Hierarchical Design Optimization
+#### Hierarchical Design Optimization 🏛️
 
 **Design 5:** `multiple_module_opt.v`
 - **Logic:**  
@@ -337,7 +337,7 @@ opt_clean -purge
 
 ---
 
-### Labs on Sequential Logic Optimization
+### Labs on Sequential Logic Optimization 🔁
 
 After synthesizing sequential logic, use:
 ```sh
@@ -381,7 +381,7 @@ opt_clean -purge
 
 ---
 
-### Labs on Unused Output Optimization
+### Labs on Unused Output Optimization 🗑️
 
 #### Design 1: `counter_opt.v`
 - **Logic:** 3-bit counter, output is LSB.
@@ -402,11 +402,11 @@ opt_clean -purge
 ---
 
 <details>
-<summary>Day 4 - Gate-Level Simulation (GLS) and Synthesis-Simulation Mismatch</summary>
+<summary>Day 4 - Gate-Level Simulation (GLS) and Synthesis-Simulation Mismatch 🏁⚠️</summary>
 
 ## Day 4 - Gate-Level Simulation (GLS) and Synthesis-Simulation Mismatch
 
-### Introduction to GLS
+### Introduction to GLS 🏁
 
 **Gate-Level Simulation (GLS):**  
 Simulates the design using gate-level netlist to verify functionality after synthesis.  
@@ -431,7 +431,7 @@ The same testbench used for RTL can be applied to the gate-level netlist.
 
 ---
 
-### Labs on GLS
+### Labs on GLS 🧪
 
 #### Design 1: Ternary Operator (Mux)
 
@@ -449,7 +449,7 @@ The same testbench used for RTL can be applied to the gate-level netlist.
 
 ---
 
-#### Design 2: Bad Mux (Missing Sensitivity List)
+#### Design 2: Bad Mux (Missing Sensitivity List) ⚠️
 
 - **Issue:** Inputs `i0` and `i1` are not in the sensitivity list, so output does not change with input.
 - **Result:**  
@@ -458,7 +458,7 @@ The same testbench used for RTL can be applied to the gate-level netlist.
 
 ---
 
-#### Design 3: Blocking Statement Caveat
+#### Design 3: Blocking Statement Caveat 🚧
 
 - **Code Example:**  
   ```verilog
@@ -484,11 +484,11 @@ GLS helps catch mismatches between RTL simulation and synthesized netlist, espec
 ---
 
 <details>
-<summary>Day 5 - Optimization in Synthesis</summary>
+<summary>Day 5 - Optimization in Synthesis ⚙️📝</summary>
 
 ## Day 5 - Optimization in Synthesis
 
-### If & Case Constructs
+### If & Case Constructs 📝
 
 - **If and case** are used inside `always` blocks to assign values to registers.
 - **If construct:** Has priority over `elseif` and `else` conditions.
@@ -513,7 +513,7 @@ GLS helps catch mismatches between RTL simulation and synthesized netlist, espec
 
 ---
 
-### Labs on Incomplete If and Case Statements
+### Labs on Incomplete If and Case Statements 🧪
 
 #### Design: `incomp_if.v`
 - **Description:** Mux with missing else condition; output latches when select is low.
@@ -565,7 +565,7 @@ GLS helps catch mismatches between RTL simulation and synthesized netlist, espec
 
 ---
 
-### Looping Constructs Labs
+### Looping Constructs Labs 🔁
 
 1. **For loop:** Used inside `always` blocks for evaluating expressions.
 2. **Generate + for loop:** Used outside `always` blocks for hardware instantiation.
