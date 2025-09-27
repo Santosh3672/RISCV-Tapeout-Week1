@@ -412,214 +412,200 @@ opt_clean -purge
 
 </details>
 
-
 <details>
-<summary>Day 4 - GLS and Synthesis-simulation mismatch</summary>
+<summary>Day 4 - Gate-Level Simulation (GLS) and Synthesis-Simulation Mismatch</summary>
 
-
-## Day 4 - GLS and Synthesis-simulation mismatch
+## Day 4 - Gate-Level Simulation (GLS) and Synthesis-Simulation Mismatch
 
 ### Introduction to GLS
-**Gate level simulation (GLS):** Running the test bench with the netlist as Design under test.
-As netlist is logically same as RTL code, same testbench will align with the design.
-**Why GLS:**
-- Verify logical correctness of design after synthesis
-- Ensure timing of design is met using (with delay annotation)
+
+**Gate-Level Simulation (GLS):**  
+Simulates the design using gate-level netlist to verify functionality after synthesis.  
+The same testbench used for RTL can be applied to the gate-level netlist.
+
+**Why GLS is required?**
+- Verifies logical correctness after synthesis
+- Ensures timing is met (with delay annotation)
 
 **GLS using Iverilog:**
-Inputs needed: 
-- Design
-- Gate level verilog models for std cells (extra for GLS) 
-- Testbench
+- **Inputs:**  
+  - Design  
+  - Gate-level Verilog models for standard cells  
+  - Testbench
+- **Output:**  
+  - VCD file (viewed in GTKWave)
+- For timing analysis, timing models of standard cells are needed.
 
-Output generated: VCD file -> GTKwave
-For timing analysis timing model of std cells needed.
+**Common Causes of Synthesis-Simulation Mismatch:**
+1. **Missing sensitivity list:**  
+   Omitting important signals in the sensitivity list can change design behavior and produce unexpected outputs.
+2. **Blocking vs Non-blocking statements:**  
+   Blocking (`=`) executes statements sequentially, while non-blocking (`<=`) executes in parallel. Using blocking statements incorrectly can lead to unexpected results.
 
-Cause of mismatch in Synthesis:
-1. Missing sensitivity list: Missing important signals in sensitivity list changes the behavior of the design producing unexpected output.
-2. Blocking a non blocking statement in verilog: Blocking statement (=) executes statement in the order it is written while non blocking statement (<=) evaluates parallely, blocking an non blocking statement produce unexpected response.
+---
 
-### Labs on GLS:
+### Labs on GLS
 
-**Design 1:** Ternary operator:
-A ternary operation is same as mux.
-Simulation of RTL: 
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p1.png)  
-*Fig:  Ternary operator RTL simulation*
+#### Design 1: Ternary Operator (Mux)
 
-Synthesis done on ternary operator a mux was added as shown in image below 
-For GLS using iverilog following command is required:
-`iverilog <primitive> <std cell verilog file> <netlist file > <testbench>` 
+- **RTL Simulation:**  
+  ![Ternary operator RTL simulation](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p1.png)  
+  *Fig: Ternary operator RTL simulation*
 
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p2.png)  
+- **Synthesis and GLS:**  
+  Use the following command for GLS:  
+  ```sh
+  iverilog <primitive> <std_cell_verilog_file> <netlist_file> <testbench>
+  ```
+  ![GLS schematic](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p2.png)  
+  Internal signals (like `_0_`) are visible in GLS.
 
-Synth schematic and GLS results
-As it was GLS the internal signals like _0_ were also shown .
+---
 
-**Design 2:** Bad mux:
-i0 and i1 are not a part of sensitivity list.
-After stimulation we see output is not changing with changing input i0 and i1
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p3.png)  
+#### Design 2: Bad Mux (Missing Sensitivity List)
 
+- **Issue:**  
+  Inputs `i0` and `i1` are not in the sensitivity list, so output does not change with input.
+- **Result:**  
+  ![Bad mux simulation](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p3.png)  
+  Schematic uses only one mux; GLS result mismatches with RTL simulation.
 
-Post synthesis in Yosys it used only 1 mux in schematic and GLS result has mismatch with RTL simulation.
-**Design 3:** Blocking Caveat:
-	d = x & c;
-	x = a | b;
-This logic is defined as a blocking statement while after synthesis it is a combinational design with orand cell used.
+---
 
-Following image is RTL simulation waveform and GLS waveform 
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p5.png)  
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p6.png)  
+#### Design 3: Blocking Statement Caveat
 
-RTL simulation (top) havint latching operation and Syn netlist GLS (bottom) showing combinational operation during posedge of c
+- **Code Example:**  
+  ```verilog
+  d = x & c;
+  x = a | b;
+  ```
+  Blocking statements can cause latching behavior in RTL, but synthesis produces combinational logic.
+
+- **Waveforms:**  
+  ![RTL simulation waveform](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p5.png)  
+  *RTL simulation (top) shows latching operation.*
+
+  ![GLS waveform](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d4p6.png)  
+  *GLS (bottom) shows combinational operation during posedge of `c`.*
+
+---
+
+**Summary:**  
+GLS helps catch mismatches between RTL simulation and synthesized netlist, especially due to coding style issues like missing sensitivity lists or incorrect use of blocking/non-blocking assignments.
 
 </details>
 
+
 <details>
-<summary>Day 5 - Optimization in synthesis</summary>
+<summary>Day 5 - Optimization in Synthesis</summary>
 
+## Day 5 - Optimization in Synthesis
 
-## Day 5 - Optimization in synthesis
+### If & Case Constructs
 
-### If & case construct: 
+- **If and case** are used inside `always` blocks to assign values to registers.
+- **If construct:** Has priority over `elseif` and `else` conditions.
+- **Case construct:** All cases have equal priority, so a mux is inferred.
 
-If and case are used inside always block and assign value to a register
-If construct has a priority over elseif and else condition
-While case construct has all cases with same priority so a mux is infered
+**Cautions with If:**
+- **Inferred latches:**  
+  If not all conditions are covered, the output may retain its previous value, resulting in a latch.  
+  *Example:*
+  ```verilog
+  if (cond1)
+      y = a;
+  else if (cond2)
+      y = b;
+  // No else: y is latched if neither cond1 nor cond2 is true
+  ```
 
-Danger/caution with if: Infered latches (due to bad coding style)
-eg ``if (cond1)
-	y = a;
-else if (cond2)
-	y = b``
+**Cautions with Case:**
+1. **Incomplete case statement:**  
+   If not all cases are considered, a latch is inferred for missing cases.  
+   *Solution:* Add a `default` case.
+2. **Partial assignment:**  
+   If all variables are not assigned in every case, unassigned variables will be latched.
+3. **Overlapping case conditions:**  
+   All case conditions must be unique; overlapping cases can confuse the simulator.
 
-Here the else condition when none of cond1 and cond2 occurs the y is not modelled. in this case the Y will be latched to its previous value through a infered latch.
-In a combinational circuit we dont expect infered latch.
+---
 
-Danger/caution with Case statement:
-1. Incomplete case statement, all cases are not considered. For cases not considered an infered latch is created asigning register with its previous value. Solution is to add default case else an infered latch is created.
-2. Partial assignment statement: If all variables are not assigned in all cases, the unassigned variables will use previous value using an infered latch.
-3. Overlapping Case condition: Unlike if else statement all case statement must be unique and different as all are executed in parallel.
+### Labs on Incomplete If and Case Statements
 
-### Labs on incomplete If and case statement:
+#### Design: `incomp_if.v`
+- **Description:** Mux with missing else condition; output latches when select is low.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p1.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p2.png)
+- **Note:** Synthesis uses a latch due to incomplete coding.
 
-**Design:** incomp_if.v
-**Description:** A mux where if condition with select line 1 is mentioned else condition is not mentioned (so it will use infered latch )
-Following is snippet of RTL simulation:
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p1.png)  
+#### Design: `incomplete_if2.v`
+- **Description:** Mux with 2-bit select; not all conditions covered.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p3.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p4.png)
+- **Note:** Synthesis uses a D-latch; output latches when select lines are 0.
 
-when sel (i0) is high y is following i1, when i0 is low y is latching last value at first when i0 is 0 y is not defined (floating)
+#### Design: `incomp_case.v`
+- **Description:** Mux with 2-bit select; some cases not defined.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p5.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p6.png)
+- **Note:** Output latches for undefined cases.
 
-Synthesis schematic and GLS are shown below:
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p2.png)  
+#### Design: `comp_case.v`
+- **Description:** Mux with default case added.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p7.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p8.png)
+- **Note:** Proper muxing, no latches.
 
-As shown above we can see that due to incorrect coding style the synthesis is using a latch instead of mux.
+#### Design: `partial_case_assign.v`
+- **Description:** Mux with two outputs; one output not assigned in all cases.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p9.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p10.png)
+- **Note:** Latch inferred for unassigned output.
 
+#### Design: `bad_case.v`
+- **Description:** Mux with overlapping case conditions using wildcards.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p11.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p12.png)
+- **Note:** Overlapping cases can confuse the simulator.
 
-**Design:** incomplete_if2.v
-**Description:** A mux with 2bit select line but the if else condition doesnt cover all condition as else condition is absent. 
-When the select line is 2’b00 (i0 and i2 1’b0) the output latches to its previous value.
-RTL simulation shown below:
+---
 
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p3.png)  
+### Looping Constructs Labs
 
-When i0 and i2 are 0 y follows its previous value.
+1. **For loop:** Used inside `always` blocks for evaluating expressions.
+2. **Generate + for loop:** Used outside `always` blocks for hardware instantiation.
 
-Synthesis schematic and GLS is shown below:
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p4.png)  
+#### Design: `mux_generated.v`
+- **Description:** 4:1 Mux coded with for loop.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p13.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p14.png)
 
-Synthesis of the design uses a Dlatch with combinational logic and GLS also shows output latching when select lines are 0.
-Incorrect if coding makes the logic sequential.
+#### Design: `demux_generated.v`
+- **Description:** 1:8 Demux coded with for loop.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p15.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p16.png)
 
+#### Design: `rca.v` and `fa.v`
+- **Description:** 8-bit adder using full adder; instantiated with generate and for loop.
+- **RTL Simulation:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p17.png)
+- **Synthesis & GLS:**  
+  ![Image](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p18.png)
 
-**Design:** incomp_case.v
-**Description:** Mux with 2bit select line but case statement for sel value of 2’b10 and 2’b11 are not defined.
-
-RTL simulation shown below:
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p5.png)  
-
-When sel becomes 10 or 11 Y latches to its previous value.
-
-Synthesis schematic shows use of 1 dlatch and muxing logic. GLS also shows latching of output when sel1 is 1.
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p6.png)  
-
-**Design:** comp_case.v
-**Description:** Previous design with a default statement added to cover remaining cases.
-
-This is correct coding style, RTL simulation shows proper mux operation.
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p7.png)  
-
-Synthesis schematic also shows only combinational logic to implement Muxing operation and GLS also shows muxing waveform.
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p8.png)  
-
-**Design:** partial_case_assign.v
-**Description:** Mux with two outputs(x and y), all case are considered but when sel is 2’b01 x is not defined. While Y is defined for all cases
-
-RTL simulation shows, had issues in testbench in the module definition, extra i3 input defined and select line defined as 1 bit input which is corrected and simulation is performed.
-As expected proper muxing for Y is seen and for X latching occurs when sel is 2`b01.
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p9.png)  
-
-Synthesis scheamtic shows latch for X output and GLS are matching with RTL sim
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p10.png)
-
-**Design:** bad_case.v
-**Description:** Mux with overlaps in case condition due to use of wildcase character. Sel value of 10 is defines y as i0 and sel value of 1? (10 and 11) is also defines y as i3, confusing the simulator.
-
-RTL simulation shows output value is set to 1 when sel is 2’b11.
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p11.png)
-
-However in synthesis schematics it is using a mux and GLS shows proper muxing.
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p12.png)
-
-Hence overlapping case statement confuses the simulation tool.
-
-### Looping constructs labs
-
-1. For loop: used inside always block for evaluating expression
-2. Generate followed by for loop: Used outside always block for instantiating hardware multiple times.
-
-**Design:** mux_generated.v
-**Description:** 4:1 Mux coded with for loop.
-RTL simulation shows proper muxing activity, when sel is 00 i0 is passed and so on.
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p13.png)
-
-Synthesised netlist GLS also shows similar muxing behaviour:
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p14.png)
-
-**Design:** demux_generated.v
-**Description:** 1:8 demux coded with for loop
-
-RTL simulation shows proper muxing when select line is set to a particular value, corresponding output is getting value of input as shown below:
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p15.png)
-
-Synthesised netlist GLS also shows demuxing behaviour as per RTL simulation:
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p16.png)
-
-**Design:** rca.v and fa.v
-**Description:** 8 bit adder design using full adder from fa.v, LSB is instantiated with cary set to 0 and remaining full adders are instantiated using for loop after generate statement.
-
-For RTL simulation we need to provide fa.v as well to the iverilog
-``iverilog rca.v fa.v tb_rca.v``
-RTL simulation is shown below
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p17.png)
-
-For eg at cursor num1 =  41 num2 = 98, expected output 41 + 98 = 139, value of sum_out 139.
-
-The synthesised schematic shows 8 FA being instantiated and netlist GLS is shown below.
-
-![Image ](https://github.com/Santosh3672/RISCV-Tapeout-Week1/blob/main/Images%20W1/W1d5p18.png)
-
-From image above num1 = 127, num2 = 56, expected output 183, sum_out = 183
-
-
-
-</detail>
+</details>
